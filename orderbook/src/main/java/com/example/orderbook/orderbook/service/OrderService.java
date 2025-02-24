@@ -5,6 +5,8 @@ import com.example.orderbook.orderbook.repository.OrderBookRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalDouble;
 
 @Service
 public class OrderService {
@@ -15,8 +17,14 @@ public class OrderService {
         this.repository = repository;
     }
 
+    // make all this more object oriented per ticker with an interface
+
     public List<Order> getAllOrders() {
         return repository.findAll();
+    }
+
+    public List<Order> getAllOrdersByTicker(String ticker) {
+        return repository.findByTickerIgnoreCase(ticker);
     }
 
     public Order addOrder(Order order) {
@@ -24,15 +32,39 @@ public class OrderService {
     }
 
     // make into bigdecimal
-    public double getMinPrice(String ticker) {
-        return repository.findLowestPricePerTicker(ticker);
+    public Optional<Double> getMinPrice(String ticker) {
+        List<Order> orders = repository.findByTickerIgnoreCase(ticker);
+
+        if (orders.isEmpty()) {
+            return Optional.empty();
+        }
+
+        OptionalDouble minPrice = orders.stream().mapToDouble(Order::getPrice).min();
+
+        return Optional.of(minPrice.getAsDouble());
     }
 
-    public double getMaxPrice(String ticker) {
-        return repository.findHighestPricePerTicker(ticker);
+    public Optional<Double> getMaxPrice(String ticker) {
+        List<Order> orders = repository.findByTickerIgnoreCase(ticker);
+
+        if (orders.isEmpty()) {
+            return Optional.empty();
+        }
+
+        OptionalDouble maxPrice = orders.stream().mapToDouble(Order::getPrice).max();
+
+        return Optional.of(maxPrice.getAsDouble());
     }
 
-    public double getAveragePrice(String ticker) {
-        return repository.findAveragePricePerTicker(ticker);
+    public Optional<Double> getAveragePrice(String ticker) {
+        List<Order> orders = repository.findByTickerIgnoreCase(ticker);
+
+        if (orders.isEmpty()) {
+            return Optional.empty();
+        }
+
+        OptionalDouble averagePrice = orders.stream().mapToDouble(Order::getPrice).average();
+
+        return Optional.of(averagePrice.getAsDouble());
     }
 }

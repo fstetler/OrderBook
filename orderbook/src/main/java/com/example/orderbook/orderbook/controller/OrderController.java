@@ -2,12 +2,13 @@ package com.example.orderbook.orderbook.controller;
 
 import com.example.orderbook.orderbook.model.Order;
 import com.example.orderbook.orderbook.service.OrderService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "orders")
@@ -24,18 +25,46 @@ public class OrderController {
         return orderService.getAllOrders();
     }
 
+    @GetMapping("/getAllOrders/{ticker}")
+    public List<Order> getAllOrdersByTicker(@PathVariable String ticker) {
+        return orderService.getAllOrdersByTicker(ticker);
+    }
+
+    @PostMapping("/addOrder")
+    public ResponseEntity<Order> addOrder(@RequestBody Order order) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(order);
+    }
+
     @GetMapping("/{ticker}/lowest_price")
-    public double getLowestPrice(@PathVariable String ticker) {
-        return orderService.getMinPrice(ticker);
+    public ResponseEntity<?> getLowestPrice(@PathVariable String ticker) {
+        Optional<Double> price = orderService.getMinPrice(ticker);
+
+        if (price.isEmpty()) {
+            return ResponseEntity.ok(Map.of("message", "No orders found of that ticker"));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.getMinPrice(ticker));
     }
 
     @GetMapping("/{ticker}/highest_price")
-    public double getHighestPrice(@PathVariable String ticker) {
-        return orderService.getMaxPrice(ticker);
+    public ResponseEntity<?> getHighestPrice(@PathVariable String ticker) {
+        Optional<Double> price = orderService.getMaxPrice(ticker);
+
+        if (price.isEmpty()) {
+            return ResponseEntity.ok(Map.of("message", "No orders found of that ticker"));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.getMaxPrice(ticker));
     }
 
     @GetMapping("/{ticker}/average_price")
-    public double getAveragePrice(@PathVariable String ticker) {
-        return orderService.getAveragePrice(ticker);
+    public ResponseEntity<?> getAveragePrice(@PathVariable String ticker) {
+        Optional<Double> price = orderService.getAveragePrice(ticker);
+
+        if (price.isEmpty()) {
+            return ResponseEntity.ok(Map.of("message", "No orders found of that ticker"));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.getAveragePrice(ticker));
     }
 }
