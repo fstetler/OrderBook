@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
-public interface OrderBookRepository extends JpaRepository<Order, String> {
+public interface OrderBookRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByTickerIgnoreCase(String ticker);
 

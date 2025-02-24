@@ -25,6 +25,12 @@ public class OrderController {
         return orderService.getAllOrders();
     }
 
+    @GetMapping("/getOrderById/{id}")
+    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
+        Optional<Order> order = orderService.getOrderById(id);
+        return order.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
     @GetMapping("/getAllOrders/{ticker}")
     public List<Order> getAllOrdersByTicker(@PathVariable String ticker) {
         return orderService.getAllOrdersByTicker(ticker);
