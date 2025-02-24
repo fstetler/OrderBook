@@ -2,7 +2,6 @@ package com.example.orderbook.orderbook.service;
 
 import com.example.orderbook.orderbook.model.Order;
 import com.example.orderbook.orderbook.repository.OrderBookRepository;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +19,6 @@ public class OrderService {
     }
 
     // make all this more object oriented per ticker with an interface
-
     public List<Order> getAllOrders() {
         return repository.findAll();
     }
