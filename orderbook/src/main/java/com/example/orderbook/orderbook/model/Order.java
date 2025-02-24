@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 @Entity
@@ -13,8 +15,10 @@ import java.time.LocalDateTime;
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
+    private UUID id;
 
     private String ticker;
 
@@ -34,7 +38,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long id, String ticker, String type, int volume, double price, String currency, LocalDateTime date_time) {
+    public Order(UUID id, String ticker, String type, int volume, double price, String currency, LocalDateTime date_time) {
         this.id = id;
         this.ticker = ticker;
         this.type = type;
@@ -49,11 +53,11 @@ public class Order {
         this.dateTime = LocalDateTime.now();
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
