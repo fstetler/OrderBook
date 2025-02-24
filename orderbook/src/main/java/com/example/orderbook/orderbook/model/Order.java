@@ -1,8 +1,11 @@
 package com.example.orderbook.orderbook.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -23,7 +26,8 @@ public class Order {
     private int volume;
 
     // make into bigdecimal
-    private double price;
+    @Column(precision = 20, scale = 10)
+    private BigDecimal price;
 
     // make into enum
     private String currency;
@@ -33,7 +37,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(UUID id, String ticker, String type, int volume, double price, String currency, LocalDateTime date_time) {
+    public Order(UUID id, String ticker, String type, int volume, BigDecimal price, String currency, LocalDateTime date_time) {
         this.id = id;
         this.ticker = ticker;
         this.type = type;
@@ -80,11 +84,11 @@ public class Order {
         this.volume = volume;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

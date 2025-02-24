@@ -15,13 +15,13 @@ public interface OrderBookRepository extends JpaRepository<Order, UUID> {
     List<Order> findByTickerIgnoreCase(String ticker);
 
     @Query("SELECT MIN(o.price) FROM Order o WHERE o.ticker = :ticker")
-    double findLowestPricePerTicker(String ticker);
+    BigDecimal findLowestPricePerTicker(String ticker);
 
     @Query("SELECT MAX(o.price) FROM Order o WHERE o.ticker = :ticker")
-    double findHighestPricePerTicker(String ticker);
+    BigDecimal findHighestPricePerTicker(String ticker);
 
     @Query("SELECT AVG(o.price) FROM Order o WHERE o.ticker = :ticker")
-    double findAveragePricePerTicker(String ticker);
+    BigDecimal findAveragePricePerTicker(String ticker);
 
 
 }

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class OrderController {
     // change these to be from and to a specific date
     @GetMapping("/{ticker}/lowest_price")
     public ResponseEntity<?> getLowestPrice(@PathVariable String ticker) {
-        Optional<Double> price = orderService.getMinPrice(ticker);
+        Optional<BigDecimal> price = orderService.getMinPrice(ticker);
 
         if (price.isEmpty()) {
             return ResponseEntity.ok(Map.of("message", "No orders found of that ticker"));
@@ -57,7 +58,7 @@ public class OrderController {
     // change these to be from and to a specific date
     @GetMapping("/{ticker}/highest_price")
     public ResponseEntity<?> getHighestPrice(@PathVariable String ticker) {
-        Optional<Double> price = orderService.getMaxPrice(ticker);
+        Optional<BigDecimal> price = orderService.getMaxPrice(ticker);
 
         if (price.isEmpty()) {
             return ResponseEntity.ok(Map.of("message", "No orders found of that ticker"));
@@ -69,7 +70,7 @@ public class OrderController {
     // change these to be from and to a specific date
     @GetMapping("/{ticker}/average_price")
     public ResponseEntity<?> getAveragePrice(@PathVariable String ticker) {
-        Optional<Double> price = orderService.getAveragePrice(ticker);
+        Optional<BigDecimal> price = orderService.getAveragePrice(ticker);
 
         if (price.isEmpty()) {
             return ResponseEntity.ok(Map.of("message", "No orders found of that ticker"));

@@ -4,6 +4,8 @@ import com.example.orderbook.orderbook.model.Order;
 import com.example.orderbook.orderbook.repository.OrderBookRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -37,39 +39,35 @@ public class OrderService {
     }
 
     // make into bigdecimal
-    public Optional<Double> getMinPrice(String ticker) {
+    public Optional<BigDecimal> getMinPrice(String ticker) {
         List<Order> orders = repository.findByTickerIgnoreCase(ticker);
 
         if (orders.isEmpty()) {
             return Optional.empty();
         }
 
-        OptionalDouble minPrice = orders.stream().mapToDouble(Order::getPrice).min();
-
-        return Optional.of(minPrice.getAsDouble());
+        return orders.stream().map(Order::getPrice).min(BigDecimal::compareTo);
     }
 
-    public Optional<Double> getMaxPrice(String ticker) {
+    public Optional<BigDecimal> getMaxPrice(String ticker) {
         List<Order> orders = repository.findByTickerIgnoreCase(ticker);
 
         if (orders.isEmpty()) {
             return Optional.empty();
         }
 
-        OptionalDouble maxPrice = orders.stream().mapToDouble(Order::getPrice).max();
-
-        return Optional.of(maxPrice.getAsDouble());
+        return orders.stream().map(Order::getPrice).max(BigDecimal::compareTo);
     }
 
-    public Optional<Double> getAveragePrice(String ticker) {
+    public Optional<BigDecimal> getAveragePrice(String ticker) {
         List<Order> orders = repository.findByTickerIgnoreCase(ticker);
 
         if (orders.isEmpty()) {
             return Optional.empty();
         }
 
-        OptionalDouble averagePrice = orders.stream().mapToDouble(Order::getPrice).average();
-
-        return Optional.of(averagePrice.getAsDouble());
+        return orders.stream()
+                .map(Order::getPrice).reduce(BigDecimal::add)
+                .map(total -> total.divide(BigDecimal.valueOf(orders.size()), RoundingMode.HALF_DOWN));
     }
 }
