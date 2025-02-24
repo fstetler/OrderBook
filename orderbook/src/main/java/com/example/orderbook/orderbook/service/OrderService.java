@@ -27,7 +27,6 @@ public class OrderService {
 
     public Optional<Order> getOrderById(UUID id) {
         return repository.findById(id);
-
     }
 
     public List<Order> getAllOrdersByTicker(String ticker) {

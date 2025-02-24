@@ -1,5 +1,6 @@
 package com.example.orderbook.orderbook.model;
 
+import com.example.orderbook.orderbook.utils.Currencies;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.*;
@@ -30,14 +31,16 @@ public class Order {
     private BigDecimal price;
 
     // make into enum
-    private String currency;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Currencies currency;
 
     private LocalDateTime dateTime;
 
     public Order() {
     }
 
-    public Order(UUID id, String ticker, String type, int volume, BigDecimal price, String currency, LocalDateTime date_time) {
+    public Order(UUID id, String ticker, String type, int volume, BigDecimal price, Currencies currency, LocalDateTime date_time) {
         this.id = id;
         this.ticker = ticker;
         this.type = type;
@@ -92,11 +95,11 @@ public class Order {
         this.price = price;
     }
 
-    public String getCurrency() {
+    public Currencies getCurrency() {
         return currency;
     }
 
-    public void setCurrency(String currency) {
+    public void setCurrency(Currencies currency) {
         this.currency = currency;
     }
 
