@@ -42,6 +42,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.addOrder(order));
     }
 
+    // change these to be from and to a specific date
     @GetMapping("/{ticker}/lowest_price")
     public ResponseEntity<?> getLowestPrice(@PathVariable String ticker) {
         Optional<Double> price = orderService.getMinPrice(ticker);
@@ -53,6 +54,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.getMinPrice(ticker));
     }
 
+    // change these to be from and to a specific date
     @GetMapping("/{ticker}/highest_price")
     public ResponseEntity<?> getHighestPrice(@PathVariable String ticker) {
         Optional<Double> price = orderService.getMaxPrice(ticker);
@@ -64,6 +66,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.getMaxPrice(ticker));
     }
 
+    // change these to be from and to a specific date
     @GetMapping("/{ticker}/average_price")
     public ResponseEntity<?> getAveragePrice(@PathVariable String ticker) {
         Optional<Double> price = orderService.getAveragePrice(ticker);
