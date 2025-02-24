@@ -28,7 +28,7 @@ public class Order {
 
     private int volume;
 
-    private BigDecimal price;
+    private double price;
 
     // make into enum
     private String currency;
