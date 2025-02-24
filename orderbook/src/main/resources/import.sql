@@ -1,0 +1,1 @@
+INSERT INTO ORDERS (ticker, type, volume, price, currency) VALUES ('TSLA', 'SELL', 200, 150, 'USD');
