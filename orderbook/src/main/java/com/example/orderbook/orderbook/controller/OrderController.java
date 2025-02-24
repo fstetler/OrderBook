@@ -32,7 +32,7 @@ public class OrderController {
 
     @PostMapping("/addOrder")
     public ResponseEntity<Order> addOrder(@RequestBody Order order) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(order);
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.addOrder(order));
     }
 
     @GetMapping("/{ticker}/lowest_price")
