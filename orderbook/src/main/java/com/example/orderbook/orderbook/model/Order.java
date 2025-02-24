@@ -1,8 +1,6 @@
 package com.example.orderbook.orderbook.model;
 
 import com.example.orderbook.orderbook.utils.Currencies;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -35,24 +33,24 @@ public class Order {
     @Column(nullable = false)
     private Currencies currency;
 
-    private LocalDateTime dateTime;
+    private LocalDateTime createdAt;
 
     public Order() {
     }
 
-    public Order(UUID id, String ticker, String type, int volume, BigDecimal price, Currencies currency, LocalDateTime date_time) {
+    public Order(UUID id, String ticker, String type, int volume, BigDecimal price, Currencies currency, LocalDateTime created_at) {
         this.id = id;
         this.ticker = ticker;
         this.type = type;
         this.volume = volume;
         this.price = price;
         this.currency = currency;
-        this.dateTime = date_time;
+        this.createdAt = created_at;
     }
 
     @PrePersist
     private void onCreate() {
-        this.dateTime = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
     }
 
     public UUID getId() {
@@ -103,11 +101,11 @@ public class Order {
         this.currency = currency;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

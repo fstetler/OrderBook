@@ -20,7 +20,6 @@ public class OrderService {
         this.repository = repository;
     }
 
-    // make all this more object oriented per ticker with an interface
     public List<Order> getAllOrders() {
         return repository.findAll();
     }
@@ -31,6 +30,10 @@ public class OrderService {
 
     public List<Order> getAllOrdersByTicker(String ticker) {
         return repository.findByTickerIgnoreCase(ticker);
+    }
+
+    public int numberOfOrdersByTicker(String ticker) {
+        return repository.findByTickerIgnoreCase(ticker).size();
     }
 
     public Order addOrder(Order order) {
@@ -58,7 +61,14 @@ public class OrderService {
         return orders.stream().map(Order::getPrice).max(BigDecimal::compareTo);
     }
 
+    // for tomorrow
+    // fix date on all max/min/avg
+
+
     public Optional<BigDecimal> getAveragePrice(String ticker) {
+
+
+
         List<Order> orders = repository.findByTickerIgnoreCase(ticker);
 
         if (orders.isEmpty()) {

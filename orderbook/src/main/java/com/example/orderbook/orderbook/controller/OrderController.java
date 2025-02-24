@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,6 +40,11 @@ public class OrderController {
     @GetMapping("/order/{ticker}")
     public List<Order> getAllOrdersByTicker(@PathVariable String ticker) {
         return orderService.getAllOrdersByTicker(ticker);
+    }
+
+    @GetMapping("/order/amount/{ticker}")
+    public int getAmountOfOrdersByTicker(@PathVariable String ticker) {
+        return orderService.numberOfOrdersByTicker(ticker);
     }
 
     @PostMapping()
@@ -78,8 +84,9 @@ public class OrderController {
     }
 
     // change these to be from and to a specific date
-    @GetMapping("/{ticker}/average_price")
-    public ResponseEntity<?> getAveragePrice(@PathVariable String ticker) {
+    @GetMapping("/{ticker}/average_price/{date}")
+    public ResponseEntity<?> getAveragePrice(@PathVariable String ticker, @PathVariable LocalDate date) {
+
         Optional<BigDecimal> averagePrice = orderService.getAveragePrice(ticker);
 
         if (averagePrice.isEmpty()) {
