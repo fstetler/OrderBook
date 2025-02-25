@@ -5,9 +5,7 @@ import com.example.orderbook.orderbook.repository.OrderBookRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,26 +18,12 @@ public class OrderService {
         this.repository = repository;
     }
 
-    public List<Order> getAllOrders() {
-        return repository.findAll();
-    }
-
     public Optional<Order> getOrderById(UUID id) {
         return repository.findById(id);
     }
 
-    public List<Order> getAllOrdersByTickerAndDate(String ticker, LocalDate date) {
-        return repository.findAll().stream()
-                .filter(o -> o.getTicker().name().equalsIgnoreCase(ticker))
-                .filter(o -> o.getCreatedAt().toLocalDate().equals(date))
-                .toList();
-    }
-
-    public int numberOfOrdersByTickerAndDate(String ticker, LocalDate date) {
-        return repository.findAll().stream()
-                .filter(o -> o.getTicker().name().equalsIgnoreCase(ticker))
-                .filter(o -> o.getCreatedAt().toLocalDate().equals(date))
-                .toList().size();
+    public long numberOfOrdersByTickerAndDate(String ticker, LocalDate date) {
+        return repository.amountOfOrdersByTickerAndDate(ticker, date);
     }
 
     public Order addOrder(Order order) {
@@ -47,40 +31,14 @@ public class OrderService {
     }
 
     public Optional<BigDecimal> getMinPrice(String ticker, LocalDate date) {
-        List<Order> ordersByTickerAndDate = getOrders(ticker, date);
-
-        if (ordersByTickerAndDate.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return ordersByTickerAndDate.stream().map(Order::getPrice).min(BigDecimal::compareTo);
+        return repository.findLowestPricePerTickerAndDate(ticker, date);
     }
 
     public Optional<BigDecimal> getMaxPrice(String ticker, LocalDate date) {
-        List<Order> ordersByTickerAndDate = getOrders(ticker, date);
-
-        if (ordersByTickerAndDate.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return ordersByTickerAndDate.stream().map(Order::getPrice).max(BigDecimal::compareTo);
+        return repository.findHighestPricePerTickerAndDate(ticker, date);
     }
 
     public Optional<BigDecimal> getAveragePrice(String ticker, LocalDate date) {
-        List<Order> ordersByTickerAndDate = getOrders(ticker, date);
-
-        if (ordersByTickerAndDate.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return ordersByTickerAndDate.stream()
-                .map(Order::getPrice).reduce(BigDecimal::add)
-                .map(total -> total.divide(BigDecimal.valueOf(ordersByTickerAndDate.size()), RoundingMode.HALF_DOWN));
-    }
-
-    private List<Order> getOrders(String ticker, LocalDate date) {
-        return repository.findAll().stream()
-                .filter(o -> o.getTicker().toString().equalsIgnoreCase(ticker))
-                .filter(o -> o.getCreatedAt().toLocalDate().equals(date)).toList();
+        return repository.findAveragePricePerTickerAndDate(ticker, date);
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,14 +23,6 @@ public class OrderController {
 
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
-    }
-
-    @Operation(summary = "Get all orders")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved an order") })
-    @GetMapping()
-    public List<Order> getAllOrders() {
-        return orderService.getAllOrders();
     }
 
     @Operation(summary = "Create a new order")
@@ -53,20 +44,11 @@ public class OrderController {
         return order.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @Operation(summary = "Get all orders by a specific ticker on a specific date")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved all orders from that ticker on that date"),
-            @ApiResponse(responseCode = "404", description = "No order of that id was found") })
-    @GetMapping("/{ticker}/{date}")
-    public List<Order> getAllOrdersByTickerAndDate(@PathVariable String ticker, @PathVariable LocalDate date) {
-        return orderService.getAllOrdersByTickerAndDate(ticker, date);
-    }
-
     @Operation(summary = "Get amount of orders from a ticker on a specific date")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successfully retrieved all orders from that ticker at that date") })
     @GetMapping("/amount/{ticker}/{date}")
-    public int getAmountOfOrdersByTicker(@PathVariable String ticker, @PathVariable LocalDate date) {
+    public long getAmountOfOrdersByTicker(@PathVariable String ticker, @PathVariable LocalDate date) {
         return orderService.numberOfOrdersByTickerAndDate(ticker, date);
     }
 
