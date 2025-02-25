@@ -1,6 +1,7 @@
 package com.example.orderbook.orderbook.model;
 
 import com.example.orderbook.orderbook.utils.Currencies;
+import com.example.orderbook.orderbook.utils.ExchangeType;
 import com.example.orderbook.orderbook.utils.Tickers;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
@@ -25,7 +26,9 @@ public class Order {
 
     // make into enum
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ExchangeType exchangetype;
 
     private int volume;
 
@@ -43,10 +46,10 @@ public class Order {
     public Order() {
     }
 
-    public Order(UUID id, Tickers ticker, String type, int volume, BigDecimal price, Currencies currency, LocalDateTime created_at) {
+    public Order(UUID id, Tickers ticker, ExchangeType exchangetype, int volume, BigDecimal price, Currencies currency, LocalDateTime created_at) {
         this.id = id;
         this.ticker = ticker;
-        this.type = type;
+        this.exchangetype = exchangetype;
         this.volume = volume;
         this.price = price;
         this.currency = currency;
@@ -74,12 +77,12 @@ public class Order {
         this.ticker = ticker;
     }
 
-    public String getType() {
-        return type;
+    public ExchangeType getExchangetype() {
+        return exchangetype;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setExchangetype(ExchangeType exchangetype) {
+        this.exchangetype = exchangetype;
     }
 
     public int getVolume() {

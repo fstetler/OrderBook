@@ -31,12 +31,12 @@ public class OrderService {
     }
 
     public List<Order> getAllOrdersByTicker(String ticker) {
-        return repository.findAll().stream().filter(o -> o.getTicker().equals(ticker)).toList();
+        return repository.findAll().stream().filter(o -> o.getTicker().name().equalsIgnoreCase(ticker)).toList();
     }
 
     public int numberOfOrdersByTicker(String ticker, LocalDate date) {
         return repository.findAll().stream()
-                .filter(o -> o.getTicker().equals(ticker))
+                .filter(o -> o.getTicker().name().equalsIgnoreCase(ticker))
                 .filter(o -> o.getCreatedAt().toLocalDate().equals(date))
                 .toList().size();
     }
