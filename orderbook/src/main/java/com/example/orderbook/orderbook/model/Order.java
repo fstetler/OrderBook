@@ -1,8 +1,8 @@
 package com.example.orderbook.orderbook.model;
 
-import com.example.orderbook.orderbook.utils.Currencies;
-import com.example.orderbook.orderbook.utils.ExchangeType;
-import com.example.orderbook.orderbook.utils.Tickers;
+import com.example.orderbook.orderbook.enums.Currencies;
+import com.example.orderbook.orderbook.enums.ExchangeType;
+import com.example.orderbook.orderbook.enums.Tickers;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

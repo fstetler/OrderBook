@@ -1,4 +1,4 @@
-package com.example.orderbook.orderbook.utils;
+package com.example.orderbook.orderbook.enums;
 
 public enum Currencies {
 
