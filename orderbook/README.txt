@@ -16,5 +16,6 @@ GET http://localhost:8080/orders/highest_price/{ticker}/{date}
 GET http://localhost:8080/orders/average_price/{ticker}/{date}
 GET http://localhost:8080/orders/amount/{ticker}/{date}
 
-
-
+Things to discuss:
+1. If assumption to make additional APIs was warranted or if a more strict approach would have been better
+2. If doing the work of filtering on the service layer is acceptable, or doing a method with a query in the repository would have been better as to not overload the service memory if too many orders are brought in
