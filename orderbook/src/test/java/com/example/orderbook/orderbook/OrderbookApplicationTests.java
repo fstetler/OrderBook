@@ -1,11 +1,11 @@
 package com.example.orderbook.orderbook;
 
-import com.example.orderbook.orderbook.model.Order;
-import com.example.orderbook.orderbook.repository.OrderBookRepository;
-import com.example.orderbook.orderbook.service.OrderService;
 import com.example.orderbook.orderbook.enums.Currencies;
 import com.example.orderbook.orderbook.enums.ExchangeType;
 import com.example.orderbook.orderbook.enums.Tickers;
+import com.example.orderbook.orderbook.model.Order;
+import com.example.orderbook.orderbook.repository.OrderBookRepository;
+import com.example.orderbook.orderbook.service.OrderService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -117,7 +117,6 @@ class OrderbookApplicationTests {
 		Assertions.assertEquals(Optional.empty(), highestPrice);
 	}
 
-	// test get average price
 	@Test
 	public void OrderService_RetrieveAveragePriceByTickerOnDate() {
 		Order order1 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 200, new BigDecimal("150.53515"), Currencies.USD, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
@@ -160,6 +159,4 @@ class OrderbookApplicationTests {
 
 		Assertions.assertEquals(Optional.empty(), lowestPrice);
 	}
-
-
 }
