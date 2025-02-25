@@ -2,7 +2,6 @@ package com.example.orderbook.orderbook.service;
 
 import com.example.orderbook.orderbook.model.Order;
 import com.example.orderbook.orderbook.repository.OrderBookRepository;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -10,7 +9,6 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalDouble;
 import java.util.UUID;
 
 @Service
@@ -30,12 +28,14 @@ public class OrderService {
         return repository.findById(id);
     }
 
-    // maybe remove
-    public List<Order> getAllOrdersByTicker(String ticker) {
-        return repository.findAll().stream().filter(o -> o.getTicker().name().equalsIgnoreCase(ticker)).toList();
+    public List<Order> getAllOrdersByTickerAndDate(String ticker, LocalDate date) {
+        return repository.findAll().stream()
+                .filter(o -> o.getTicker().name().equalsIgnoreCase(ticker))
+                .filter(o -> o.getCreatedAt().toLocalDate().equals(date))
+                .toList();
     }
 
-    public int numberOfOrdersByTicker(String ticker, LocalDate date) {
+    public int numberOfOrdersByTickerAndDate(String ticker, LocalDate date) {
         return repository.findAll().stream()
                 .filter(o -> o.getTicker().name().equalsIgnoreCase(ticker))
                 .filter(o -> o.getCreatedAt().toLocalDate().equals(date))
@@ -46,7 +46,6 @@ public class OrderService {
         return repository.save(order);
     }
 
-    // make into bigdecimal
     public Optional<BigDecimal> getMinPrice(String ticker, LocalDate date) {
         List<Order> ordersByTickerAndDate = getOrders(ticker, date);
 
@@ -66,10 +65,6 @@ public class OrderService {
 
         return ordersByTickerAndDate.stream().map(Order::getPrice).max(BigDecimal::compareTo);
     }
-
-    // for tomorrow
-    // fix date on all max/min/avg
-
 
     public Optional<BigDecimal> getAveragePrice(String ticker, LocalDate date) {
         List<Order> ordersByTickerAndDate = getOrders(ticker, date);

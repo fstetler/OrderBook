@@ -7,14 +7,12 @@ import com.example.orderbook.orderbook.utils.Currencies;
 import com.example.orderbook.orderbook.utils.ExchangeType;
 import com.example.orderbook.orderbook.utils.Tickers;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,20 +30,32 @@ class OrderbookApplicationTests {
 	@InjectMocks
 	private OrderService orderService;
 
-	// test for number of orders for specific ticker and date
 	@Test
 	public void OrderService_RetrieveNumberOfOrdersForATickerAndDate() {
+		Order order1 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 200, BigDecimal.valueOf(150.53515), Currencies.USD, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
+		Order order2 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.SELL, 300, BigDecimal.valueOf(155.53515), Currencies.USD, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
+		Order order3 = new Order(UUID.randomUUID(), Tickers.GME, ExchangeType.BUY, 300, BigDecimal.valueOf(160.53515), Currencies.EUR, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
+		Order order4 = new Order(UUID.randomUUID(), Tickers.SAVE, ExchangeType.BUY, 300, BigDecimal.valueOf(160.53515), Currencies.SEK, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
+		List<Order> orders = new ArrayList<>(Arrays.asList(order1, order2, order3, order4));
+
+		when(orderBookRepository.findAll()).thenReturn(orders);
+		int numberOfOrders = orderService.numberOfOrdersByTickerAndDate(Tickers.TSLA.toString(), LocalDate.of(2024, 2, 24));
+
+		Assertions.assertEquals(numberOfOrders, 2);
+	}
+
+	@Test
+	public void OrderService_RetrieveNumberOfOrdersForATickerAndDate_DateDoesntExist() {
 		Order order1 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 200, BigDecimal.valueOf(150.53515), Currencies.USD, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
 		Order order2 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 300, BigDecimal.valueOf(155.53515), Currencies.USD, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
 		List<Order> orders = new ArrayList<>(Arrays.asList(order1, order2));
 
 		when(orderBookRepository.findAll()).thenReturn(orders);
-		int numberOfOrders = orderService.numberOfOrdersByTicker(Tickers.TSLA.toString(), LocalDate.of(2024, 2, 24));
+		int numberOfOrders = orderService.numberOfOrdersByTickerAndDate(Tickers.TSLA.toString(), LocalDate.of(2024, 2, 25));
 
-		Assertions.assertEquals(numberOfOrders, 2);
+		Assertions.assertEquals(numberOfOrders, 0);
 	}
 
-	// test add order
 	@Test
 	public void OrderService_CreateAnOrder_VerifyThatItWasCreated() {
 		Order order = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 200, BigDecimal.valueOf(150.53515), Currencies.USD, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
@@ -61,8 +71,6 @@ class OrderbookApplicationTests {
 		Assertions.assertEquals(LocalDate.of(2024, 2, 24), mockOrder.getCreatedAt().toLocalDate());
 	}
 
-
-	// test get an order by id maybe?
 	@Test
 	public void OrderService_RetrieveOrderById() {
 		UUID uuid = UUID.randomUUID();
@@ -79,7 +87,15 @@ class OrderbookApplicationTests {
 		Assertions.assertEquals(LocalDate.of(2024, 2, 24), mockOrder.getCreatedAt().toLocalDate());
 	}
 
-	// test get max price
+	@Test
+	public void OrderService_RetrieveOrderById_IdIsntFound() {
+		UUID uuidDoesntExist = UUID.fromString("5a1a843d-d632-44a2-b237-dbf35b875555");
+
+		when(orderBookRepository.findById(uuidDoesntExist)).thenReturn(Optional.empty());
+		Optional<Order> mockOrder = orderService.getOrderById(uuidDoesntExist);
+		Assertions.assertEquals(Optional.empty(), mockOrder);
+	}
+
 	@Test
 	public void OrderService_RetrieveHighestPriceByTickerOnDate() {
 		Order order1 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 200, new BigDecimal("150.53515"), Currencies.USD, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
@@ -89,6 +105,16 @@ class OrderbookApplicationTests {
 		BigDecimal highestPrice = orderService.getMaxPrice(Tickers.TSLA.toString(), LocalDate.of(2024, 2, 24)).get();
 
 		Assertions.assertEquals(BigDecimal.valueOf(155.53515), highestPrice);
+	}
+
+	@Test
+	public void OrderService_RetrieveHighestPriceByTickerOnDate_DateDoesntExist() {
+		Order order1 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 200, new BigDecimal("150.53515"), Currencies.USD, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
+
+		when(orderBookRepository.findAll()).thenReturn(List.of(order1));
+		Optional<BigDecimal> highestPrice = orderService.getMaxPrice(Tickers.TSLA.toString(), LocalDate.of(2024, 2, 25));
+
+		Assertions.assertEquals(Optional.empty(), highestPrice);
 	}
 
 	// test get average price
@@ -103,7 +129,17 @@ class OrderbookApplicationTests {
 		Assertions.assertEquals(BigDecimal.valueOf(153.03515), averagePrice);
 	}
 
-	// test get lowest price
+	@Test
+	public void OrderService_RetrieveAveragePriceByTickerOnDate_DateDoesntExist() {
+		Order order1 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 200, new BigDecimal("150.53515"), Currencies.USD, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
+		Order order2 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 300, new BigDecimal("155.53515"), Currencies.USD, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
+
+		when(orderBookRepository.findAll()).thenReturn(Arrays.asList(order1, order2));
+		Optional<BigDecimal> averagePrice = orderService.getAveragePrice(Tickers.TSLA.toString(), LocalDate.of(2024, 2, 25));
+
+		Assertions.assertEquals(Optional.empty(), averagePrice);
+	}
+
 	@Test
 	public void OrderService_RetrieveLowestPriceByTickerOnDate() {
 		Order order1 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 200, new BigDecimal("150.53515"), Currencies.USD, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
@@ -115,11 +151,15 @@ class OrderbookApplicationTests {
 		Assertions.assertEquals(BigDecimal.valueOf(150.53515), lowestPrice);
 	}
 
+	@Test
+	public void OrderService_RetrieveLowestPriceByTickerOnDate_DateDoesntExist() {
+		Order order1 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 200, new BigDecimal("150.53515"), Currencies.USD, LocalDateTime.of(2024, 2, 24, 15, 30, 0));
 
+		when(orderBookRepository.findAll()).thenReturn(List.of(order1));
+		Optional<BigDecimal> lowestPrice = orderService.getMaxPrice(Tickers.TSLA.toString(), LocalDate.of(2024, 2, 25));
 
+		Assertions.assertEquals(Optional.empty(), lowestPrice);
+	}
 
-
-	// test currency valid and not valid
-	// test ticker valid and not valid
 
 }

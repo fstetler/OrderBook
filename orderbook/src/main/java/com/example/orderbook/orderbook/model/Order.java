@@ -5,6 +5,7 @@ import com.example.orderbook.orderbook.utils.ExchangeType;
 import com.example.orderbook.orderbook.utils.Tickers;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @Setter
 @Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "ORDERS")
 public class Order {
@@ -23,12 +25,9 @@ public class Order {
     @Column(columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private UUID id;
 
-    // make into enum
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Tickers ticker;
-
-    // make into enum
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -36,19 +35,14 @@ public class Order {
 
     private int volume;
 
-    // make into bigdecimal
     @Column(precision = 20, scale = 10)
     private BigDecimal price;
 
-    // make into enum
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Currencies currency;
 
     private LocalDateTime createdAt;
-
-    public Order() {
-    }
 
     public Order(UUID id, Tickers ticker, ExchangeType exchangetype, int volume, BigDecimal price, Currencies currency, LocalDateTime created_at) {
         this.id = id;
@@ -64,5 +58,4 @@ public class Order {
     private void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
-
 }

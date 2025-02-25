@@ -4,6 +4,6 @@ public enum Tickers {
 
     TSLA,
     SAVE,
-    GME;
+    GME
 
 }
