@@ -4,12 +4,16 @@ import com.example.orderbook.orderbook.utils.Currencies;
 import com.example.orderbook.orderbook.utils.ExchangeType;
 import com.example.orderbook.orderbook.utils.Tickers;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "ORDERS")
 public class Order {
@@ -61,59 +65,4 @@ public class Order {
         this.createdAt = LocalDateTime.now();
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Tickers getTicker() {
-        return ticker;
-    }
-
-    public void setTicker(Tickers ticker) {
-        this.ticker = ticker;
-    }
-
-    public ExchangeType getExchangetype() {
-        return exchangetype;
-    }
-
-    public void setExchangetype(ExchangeType exchangetype) {
-        this.exchangetype = exchangetype;
-    }
-
-    public int getVolume() {
-        return volume;
-    }
-
-    public void setVolume(int volume) {
-        this.volume = volume;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public Currencies getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(Currencies currency) {
-        this.currency = currency;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }
