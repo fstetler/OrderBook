@@ -2,10 +2,12 @@ package com.example.orderbook.orderbook.service;
 
 import com.example.orderbook.orderbook.model.Order;
 import com.example.orderbook.orderbook.repository.OrderBookRepository;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -29,11 +31,14 @@ public class OrderService {
     }
 
     public List<Order> getAllOrdersByTicker(String ticker) {
-        return repository.findByTickerIgnoreCase(ticker);
+        return repository.findAll().stream().filter(o -> o.getTicker().equals(ticker)).toList();
     }
 
-    public int numberOfOrdersByTicker(String ticker) {
-        return repository.findByTickerIgnoreCase(ticker).size();
+    public int numberOfOrdersByTicker(String ticker, LocalDate date) {
+        return repository.findAll().stream()
+                .filter(o -> o.getTicker().equals(ticker))
+                .filter(o -> o.getCreatedAt().toLocalDate().equals(date))
+                .toList().size();
     }
 
     public Order addOrder(Order order) {
@@ -41,42 +46,45 @@ public class OrderService {
     }
 
     // make into bigdecimal
-    public Optional<BigDecimal> getMinPrice(String ticker) {
-        List<Order> orders = repository.findByTickerIgnoreCase(ticker);
+    public Optional<BigDecimal> getMinPrice(String ticker, LocalDate date) {
+        List<Order> ordersByTickerAndDate = getOrders(ticker, date);
 
-        if (orders.isEmpty()) {
+        if (ordersByTickerAndDate.isEmpty()) {
             return Optional.empty();
         }
 
-        return orders.stream().map(Order::getPrice).min(BigDecimal::compareTo);
+        return ordersByTickerAndDate.stream().map(Order::getPrice).min(BigDecimal::compareTo);
     }
 
-    public Optional<BigDecimal> getMaxPrice(String ticker) {
-        List<Order> orders = repository.findByTickerIgnoreCase(ticker);
+    public Optional<BigDecimal> getMaxPrice(String ticker, LocalDate date) {
+        List<Order> ordersByTickerAndDate = getOrders(ticker, date);
 
-        if (orders.isEmpty()) {
+        if (ordersByTickerAndDate.isEmpty()) {
             return Optional.empty();
         }
 
-        return orders.stream().map(Order::getPrice).max(BigDecimal::compareTo);
+        return ordersByTickerAndDate.stream().map(Order::getPrice).max(BigDecimal::compareTo);
     }
 
     // for tomorrow
     // fix date on all max/min/avg
 
 
-    public Optional<BigDecimal> getAveragePrice(String ticker) {
+    public Optional<BigDecimal> getAveragePrice(String ticker, LocalDate date) {
+        List<Order> ordersByTickerAndDate = getOrders(ticker, date);
 
-
-
-        List<Order> orders = repository.findByTickerIgnoreCase(ticker);
-
-        if (orders.isEmpty()) {
+        if (ordersByTickerAndDate.isEmpty()) {
             return Optional.empty();
         }
 
-        return orders.stream()
+        return ordersByTickerAndDate.stream()
                 .map(Order::getPrice).reduce(BigDecimal::add)
-                .map(total -> total.divide(BigDecimal.valueOf(orders.size()), RoundingMode.HALF_DOWN));
+                .map(total -> total.divide(BigDecimal.valueOf(ordersByTickerAndDate.size()), RoundingMode.HALF_DOWN));
+    }
+
+    private List<Order> getOrders(String ticker, LocalDate date) {
+        return repository.findAll().stream()
+                .filter(o -> o.getTicker().toString().equalsIgnoreCase(ticker))
+                .filter(o -> o.getCreatedAt().toLocalDate().equals(date)).toList();
     }
 }

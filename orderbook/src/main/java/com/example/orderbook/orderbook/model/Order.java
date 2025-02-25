@@ -1,6 +1,7 @@
 package com.example.orderbook.orderbook.model;
 
 import com.example.orderbook.orderbook.utils.Currencies;
+import com.example.orderbook.orderbook.utils.Tickers;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -17,9 +18,13 @@ public class Order {
     @Column(columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private UUID id;
 
-    private String ticker;
+    // make into enum
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Tickers ticker;
 
     // make into enum
+
     private String type;
 
     private int volume;
@@ -38,7 +43,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(UUID id, String ticker, String type, int volume, BigDecimal price, Currencies currency, LocalDateTime created_at) {
+    public Order(UUID id, Tickers ticker, String type, int volume, BigDecimal price, Currencies currency, LocalDateTime created_at) {
         this.id = id;
         this.ticker = ticker;
         this.type = type;
@@ -61,11 +66,11 @@ public class Order {
         this.id = id;
     }
 
-    public String getTicker() {
+    public Tickers getTicker() {
         return ticker;
     }
 
-    public void setTicker(String ticker) {
+    public void setTicker(Tickers ticker) {
         this.ticker = ticker;
     }
 

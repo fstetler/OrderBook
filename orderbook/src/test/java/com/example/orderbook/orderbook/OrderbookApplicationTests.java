@@ -10,4 +10,7 @@ class OrderbookApplicationTests {
 	void contextLoads() {
 	}
 
+	// test currency valid and not valid
+	// test ticker valid and not valid
+
 }

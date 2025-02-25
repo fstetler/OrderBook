@@ -1,3 +1,3 @@
-INSERT INTO ORDERS (id, ticker, type, volume, price, currency, created_at) VALUES (RANDOM_UUID(), 'TSLA', 'SELL', 200, 150.5351, 'USD', NOW());
-INSERT INTO ORDERS (id, ticker, type, volume, price, currency, created_at) VALUES (RANDOM_UUID(), 'TSLA', 'SELL', 180, 140.642644, 'USD', NOW());
-INSERT INTO ORDERS (id, ticker, type, volume, price, currency, created_at) VALUES (RANDOM_UUID(), 'SAVE', 'BUY', 100, 25.5133, 'SEK', NOW());
+INSERT INTO ORDERS (id, ticker, type, volume, price, currency, created_at) VALUES (RANDOM_UUID(), 'TSLA', 'SELL', 200, 150.5351, 'USD', '2024-02-24 15:30:00');
+INSERT INTO ORDERS (id, ticker, type, volume, price, currency, created_at) VALUES (RANDOM_UUID(), 'TSLA', 'SELL', 180, 140.642644, 'USD', '2023-05-21 11:30:00');
+INSERT INTO ORDERS (id, ticker, type, volume, price, currency, created_at) VALUES (RANDOM_UUID(), 'SAVE', 'BUY', 100, 25.5133, 'SEK', '2024-11-12 14:00:00');
