@@ -30,6 +30,7 @@ public class OrderService {
         return repository.findById(id);
     }
 
+    // maybe remove
     public List<Order> getAllOrdersByTicker(String ticker) {
         return repository.findAll().stream().filter(o -> o.getTicker().name().equalsIgnoreCase(ticker)).toList();
     }
