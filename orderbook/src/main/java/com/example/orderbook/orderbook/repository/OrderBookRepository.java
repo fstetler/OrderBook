@@ -8,11 +8,15 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface OrderBookRepository extends JpaRepository<Order, UUID> {
+
+    @Query(value = "SELECT * FROM orders ORDER BY created_at DESC LIMIT :limit OFFSET :offset", nativeQuery = true)
+    List<Order> findOrdersByIndex(@Param("limit") int limit, @Param("offset") int offset);
 
     @Query(value = "SELECT COUNT(*) FROM orders o WHERE o.ticker = :ticker AND CAST(o.created_at AS DATE) = :created_at", nativeQuery = true)
     long amountOfOrdersByTickerAndDate(@Param("ticker") String ticker, @Param("created_at") LocalDate date);

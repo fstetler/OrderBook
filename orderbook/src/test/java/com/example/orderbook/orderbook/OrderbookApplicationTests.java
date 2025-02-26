@@ -6,7 +6,9 @@ import com.example.orderbook.orderbook.enums.Tickers;
 import com.example.orderbook.orderbook.model.Order;
 import com.example.orderbook.orderbook.repository.OrderBookRepository;
 import com.example.orderbook.orderbook.service.OrderService;
+import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
@@ -18,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,31 +34,53 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 //@ExtendWith(MockitoExtension.class)
-@SpringBootTest
-@RunWith(SpringRunner.class)
+//@SpringBootTest
+//@RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+//@Transactional
 class OrderbookApplicationTests {
 
     @Autowired
     private OrderBookRepository orderBookRepository;
 
     @Test
-    void testFindLowestPricePerTickerAndDate() {
-        // Given
-        Order order1 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 10, new BigDecimal("500.25"), Currencies.USD, LocalDateTime.of(2024, 2, 24, 10, 30));
-        Order order2 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 20, new BigDecimal("490.50"), Currencies.USD, LocalDateTime.of(2024, 2, 24, 12, 0));
-        Order order3 = new Order(UUID.randomUUID(), Tickers.TSLA, ExchangeType.BUY, 15, new BigDecimal("505.00"), Currencies.USD, LocalDateTime.of(2024, 2, 25, 14, 0));
+    void findAllOrdersBetweenTwoIndexes() throws InterruptedException {
 
-        orderBookRepository.saveAll(List.of(order1, order2, order3));
+        orderBookRepository.save(new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD));
+        Thread.sleep(200);
+        orderBookRepository.save(new Order(Tickers.TSLA, ExchangeType.BUY, 400, BigDecimal.valueOf(15.1515), Currencies.USD));
+        Thread.sleep(200);
+        orderBookRepository.save(new Order(Tickers.TSLA, ExchangeType.SELL, 200, BigDecimal.valueOf(150.5351), Currencies.SEK));
+        Thread.sleep(200);
+        orderBookRepository.save(new Order(Tickers.GME, ExchangeType.BUY, 400, BigDecimal.valueOf(250.7586), Currencies.USD));
+        Thread.sleep(200);
+        orderBookRepository.save(new Order(Tickers.SAVE, ExchangeType.BUY, 700, BigDecimal.valueOf(10.5386), Currencies.USD));
 
-        // When
-        Optional<BigDecimal> minPrice = orderBookRepository.findLowestPricePerTickerAndDate("TSLA", LocalDate.of(2024, 2, 24));
-
-        // Then
-        assertTrue(minPrice.isPresent());
-        assertEquals(new BigDecimal("490.50"), minPrice.get());
+        int limit = 3;
+        int offset = 1;
+        List<Order> orders = orderBookRepository.findOrdersByIndex(limit, offset);
+        Assertions.assertEquals(3, orders.size());
+        Assertions.assertEquals(orders.get(0).getVolume(), 400);
     }
+
+//    @Test
+//    void findOrderById() {
+//
+//        Order order = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD);
+//        order.setId(UUID.randomUUID());
+//        orderBookRepository.save(order);
+//
+//        Assertions.assertEquals(orderBookRepository.findById(uuid), uuid);
+//    }
+
+//    @Test
+//    void findHighestValueForOrderForATickerAndDate() {
+//        Order order1 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD);
+//        Order order2 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(15.7515), Currencies.USD);
+//
+//
+//    }
 
 //	@Mock
 //	private OrderBookRepository orderBookRepository;

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,6 +24,15 @@ public class OrderController {
 
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
+    }
+
+    @Operation(summary = "Gets all orders between a certain start and end index")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successfully found the orders between the two indexes")
+    })
+    @GetMapping("/orders/range/{startIndex}/{endIndex}")
+    public ResponseEntity<List<Order>> getOrdersByIndex(@PathVariable int startIndex, @PathVariable int endIndex) {
+        return ResponseEntity.ok(orderService.getOrdersByIndex(startIndex, endIndex));
     }
 
     @Operation(summary = "Create a new order")

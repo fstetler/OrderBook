@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,5 +41,11 @@ public class OrderService {
 
     public Optional<BigDecimal> getAveragePrice(String ticker, LocalDate date) {
         return repository.findAveragePricePerTickerAndDate(ticker, date);
+    }
+
+    public List<Order> getOrdersByIndex(int startIndex, int endIndex) {
+        int limit = endIndex - startIndex;
+        int offset = startIndex;
+        return repository.findOrdersByIndex(limit, offset);
     }
 }
