@@ -1,5 +1,7 @@
 package com.example.orderbook.orderbook.controller;
 
+import com.example.orderbook.orderbook.dtos.requests.OrderRequest;
+import com.example.orderbook.orderbook.dtos.responses.OrderResponse;
 import com.example.orderbook.orderbook.enums.Tickers;
 import com.example.orderbook.orderbook.model.Order;
 import com.example.orderbook.orderbook.service.OrderService;
@@ -32,7 +34,7 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "Successfully found the orders between the two indexes")
     })
     @GetMapping("/orders/range/{startIndex}/{endIndex}")
-    public ResponseEntity<List<Order>> getOrdersByIndexRange(@PathVariable int startIndex, @PathVariable int endIndex) {
+    public ResponseEntity<List<OrderResponse>> getOrdersByIndexRange(@PathVariable int startIndex, @PathVariable int endIndex) {
         return ResponseEntity.ok(orderService.getOrdersByIndex(startIndex, endIndex));
     }
 
@@ -41,8 +43,8 @@ public class OrderController {
             @ApiResponse(responseCode = "201", description = "Successfully created an order"),
             @ApiResponse(responseCode = "400", description = "Not allowed ticker, type, or currency") })
     @PostMapping()
-    public ResponseEntity<Order> addOrder(@RequestBody Order order) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.addOrder(order));
+    public ResponseEntity<OrderResponse> addOrder(@RequestBody OrderRequest orderRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.addOrder(orderRequest));
     }
 
     @Operation(summary = "Get an order by id")
@@ -50,8 +52,8 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved an order"),
             @ApiResponse(responseCode = "404", description = "No order of that id was found") })
     @GetMapping("/orderById/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable UUID id) {
-        Optional<Order> order = orderService.getOrderById(id);
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable UUID id) {
+        Optional<OrderResponse> order = orderService.getOrderById(id);
         return order.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 

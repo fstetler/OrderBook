@@ -1,5 +1,8 @@
 package com.example.orderbook.orderbook.service;
 
+import com.example.orderbook.orderbook.dtos.OrderMapper;
+import com.example.orderbook.orderbook.dtos.requests.OrderRequest;
+import com.example.orderbook.orderbook.dtos.responses.OrderResponse;
 import com.example.orderbook.orderbook.enums.Tickers;
 import com.example.orderbook.orderbook.model.Order;
 import com.example.orderbook.orderbook.repository.OrderBookRepository;
@@ -16,20 +19,24 @@ public class OrderService {
 
     private final OrderBookRepository repository;
 
-    public OrderService(OrderBookRepository repository) {
+    private final OrderMapper mapper;
+
+    public OrderService(OrderBookRepository repository, OrderMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
-    public Optional<Order> getOrderById(UUID id) {
-        return repository.findById(id);
+    public Optional<OrderResponse> getOrderById(UUID id) {
+        return Optional.of(mapper.toOrderResponse(repository.findById(id).get()));
     }
 
     public long numberOfOrdersByTickerAndDate(Tickers ticker, LocalDate date) {
         return repository.amountOfOrdersByTickerAndDate(ticker.toString(), date);
     }
 
-    public Order addOrder(Order order) {
-        return repository.save(order);
+    public OrderResponse addOrder(OrderRequest orderRequest) {
+        Order order = mapper.toOrder(orderRequest);
+        return mapper.toOrderResponse(repository.save(order));
     }
 
     public Optional<BigDecimal> getMinPrice(Tickers ticker, LocalDate date) {
@@ -44,8 +51,10 @@ public class OrderService {
         return repository.findAveragePricePerTickerAndDate(ticker.toString(), date);
     }
 
-    public List<Order> getOrdersByIndex(int startIndex, int endIndex) {
+    public List<OrderResponse> getOrdersByIndex(int startIndex, int endIndex) {
         int limit = endIndex - startIndex;
-        return repository.findOrdersByIndex(limit, startIndex);
+
+        List<Order> orders = repository.findOrdersByIndex(limit, startIndex);
+        return orders.stream().map(mapper::toOrderResponse).toList();
     }
 }

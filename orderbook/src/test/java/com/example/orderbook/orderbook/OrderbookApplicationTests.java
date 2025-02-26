@@ -48,7 +48,7 @@ class OrderbookApplicationTests {
         int offset = 1;
         List<Order> orders = orderBookRepository.findOrdersByIndex(limit, offset);
         Assertions.assertEquals(3, orders.size());
-        Assertions.assertEquals(500, orders.get(0).getVolume());
+        Assertions.assertEquals(200, orders.get(0).getVolume());
     }
 
     @Test

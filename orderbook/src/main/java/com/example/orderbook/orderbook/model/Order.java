@@ -5,7 +5,6 @@ import com.example.orderbook.orderbook.enums.ExchangeType;
 import com.example.orderbook.orderbook.enums.Tickers;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -15,7 +14,6 @@ import java.util.UUID;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @Entity
 @Table(name = "ORDERS")
 public class Order {
@@ -44,12 +42,17 @@ public class Order {
 
     private LocalDateTime createdAt;
 
+    public Order() {
+        this.createdAt = LocalDateTime.now();
+    }
+
     public Order(Tickers ticker, ExchangeType exchangetype, int volume, BigDecimal price, Currencies currency) {
         this.ticker = ticker;
         this.exchangetype = exchangetype;
         this.volume = volume;
         this.price = price;
         this.currency = currency;
+        this.createdAt = LocalDateTime.now();
     }
 
     public Order(Tickers ticker, ExchangeType exchangetype, int volume, BigDecimal price, Currencies currency, LocalDateTime created_at) {
@@ -59,10 +62,5 @@ public class Order {
         this.price = price;
         this.currency = currency;
         this.createdAt = created_at;
-    }
-
-    @PrePersist
-    private void onCreate() {
-        this.createdAt = LocalDateTime.now();
     }
 }
