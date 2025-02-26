@@ -1,5 +1,6 @@
 package com.example.orderbook.orderbook.service;
 
+import com.example.orderbook.orderbook.enums.Tickers;
 import com.example.orderbook.orderbook.model.Order;
 import com.example.orderbook.orderbook.repository.OrderBookRepository;
 import org.springframework.stereotype.Service;
@@ -23,24 +24,24 @@ public class OrderService {
         return repository.findById(id);
     }
 
-    public long numberOfOrdersByTickerAndDate(String ticker, LocalDate date) {
-        return repository.amountOfOrdersByTickerAndDate(ticker, date);
+    public long numberOfOrdersByTickerAndDate(Tickers ticker, LocalDate date) {
+        return repository.amountOfOrdersByTickerAndDate(ticker.toString(), date);
     }
 
     public Order addOrder(Order order) {
         return repository.save(order);
     }
 
-    public Optional<BigDecimal> getMinPrice(String ticker, LocalDate date) {
-        return repository.findLowestPricePerTickerAndDate(ticker, date);
+    public Optional<BigDecimal> getMinPrice(Tickers ticker, LocalDate date) {
+        return repository.findLowestPricePerTickerAndDate(ticker.toString(), date);
     }
 
-    public Optional<BigDecimal> getMaxPrice(String ticker, LocalDate date) {
-        return repository.findHighestPricePerTickerAndDate(ticker, date);
+    public Optional<BigDecimal> getMaxPrice(Tickers ticker, LocalDate date) {
+        return repository.findHighestPricePerTickerAndDate(ticker.toString(), date);
     }
 
-    public Optional<BigDecimal> getAveragePrice(String ticker, LocalDate date) {
-        return repository.findAveragePricePerTickerAndDate(ticker, date);
+    public Optional<BigDecimal> getAveragePrice(Tickers ticker, LocalDate date) {
+        return repository.findAveragePricePerTickerAndDate(ticker.toString(), date);
     }
 
     public List<Order> getOrdersByIndex(int startIndex, int endIndex) {
