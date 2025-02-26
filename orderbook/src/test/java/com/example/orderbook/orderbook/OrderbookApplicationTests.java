@@ -34,12 +34,10 @@ class OrderbookApplicationTests {
 
         Assertions.assertNotNull(orderSave.getId());
         Assertions.assertEquals(orderSave.getTicker(), Tickers.TSLA);
-
     }
 
     @Test
     public void findAllOrdersBetweenTwoIndexes() {
-
         orderBookRepository.save(new Order(Tickers.TSLA, ExchangeType.BUY, 100, BigDecimal.valueOf(20.7515), Currencies.USD, LocalDateTime.of(2025, 5, 5, 15, 0, 0)));
         orderBookRepository.save(new Order(Tickers.TSLA, ExchangeType.BUY, 200, BigDecimal.valueOf(15.1515), Currencies.USD, LocalDateTime.of(2025, 5, 4, 14, 0, 0)));
         orderBookRepository.save(new Order(Tickers.TSLA, ExchangeType.SELL, 300, BigDecimal.valueOf(150.5351), Currencies.SEK, LocalDateTime.of(2025, 5, 3, 13, 0, 0)));
@@ -55,11 +53,20 @@ class OrderbookApplicationTests {
 
     @Test
     public void findOrderById() {
-
         Order order = orderBookRepository.save(new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD));
         UUID id = order.getId();
 
         Assertions.assertEquals(orderBookRepository.findById(id).get().getId(), id);
+    }
+
+    @Test
+    public void findOrderById_IdDoesntExist() {
+        Order order = orderBookRepository.save(new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD));
+        String nonExistantStringId = order.getId().toString();
+        String alternatedStringId = nonExistantStringId.substring(0, nonExistantStringId.length() - 1) + "0";
+        UUID newUuid = UUID.fromString(alternatedStringId);
+
+        Assertions.assertTrue(orderBookRepository.findById(newUuid).isEmpty());
     }
 
     @Test
@@ -73,7 +80,6 @@ class OrderbookApplicationTests {
         orderBookRepository.save(order3);
 
         BigDecimal highestPrice = orderBookRepository.findHighestPricePerTickerAndDate(Tickers.TSLA.toString(), LocalDate.now()).get();
-
         Assertions.assertEquals(BigDecimal.valueOf(20.7515), highestPrice.stripTrailingZeros());
     }
 
@@ -88,9 +94,7 @@ class OrderbookApplicationTests {
         orderBookRepository.save(order3);
 
         BigDecimal highestPrice = orderBookRepository.findLowestPricePerTickerAndDate(Tickers.TSLA.toString(), LocalDate.now()).get();
-
         Assertions.assertEquals(BigDecimal.valueOf(15.7515), highestPrice.stripTrailingZeros());
-
     }
 
     @Test
@@ -104,8 +108,6 @@ class OrderbookApplicationTests {
         orderBookRepository.save(order3);
 
         BigDecimal highestPrice = orderBookRepository.findAveragePricePerTickerAndDate(Tickers.TSLA.toString(), LocalDate.now()).get();
-
         Assertions.assertEquals(BigDecimal.valueOf(18.2515), highestPrice.stripTrailingZeros());
-
     }
 }

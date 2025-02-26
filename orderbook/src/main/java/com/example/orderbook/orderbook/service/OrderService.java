@@ -46,7 +46,6 @@ public class OrderService {
 
     public List<Order> getOrdersByIndex(int startIndex, int endIndex) {
         int limit = endIndex - startIndex;
-        int offset = startIndex;
-        return repository.findOrdersByIndex(limit, offset);
+        return repository.findOrdersByIndex(limit, startIndex);
     }
 }

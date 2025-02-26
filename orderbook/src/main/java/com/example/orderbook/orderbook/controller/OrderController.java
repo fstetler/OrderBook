@@ -32,7 +32,7 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "Successfully found the orders between the two indexes")
     })
     @GetMapping("/orders/range/{startIndex}/{endIndex}")
-    public ResponseEntity<List<Order>> getOrdersByIndex(@PathVariable int startIndex, @PathVariable int endIndex) {
+    public ResponseEntity<List<Order>> getOrdersByIndexRange(@PathVariable int startIndex, @PathVariable int endIndex) {
         return ResponseEntity.ok(orderService.getOrdersByIndex(startIndex, endIndex));
     }
 
@@ -59,7 +59,7 @@ public class OrderController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successfully retrieved all orders from that ticker at that date") })
     @GetMapping("/amount/{ticker}/{date}")
-    public long getAmountOfOrdersByTicker(@PathVariable Tickers ticker, @PathVariable LocalDate date) {
+    public long getAmountOfOrdersByTickerAndDate(@PathVariable Tickers ticker, @PathVariable LocalDate date) {
         return orderService.numberOfOrdersByTickerAndDate(ticker, date);
     }
 
@@ -68,7 +68,7 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the lowest price"),
             @ApiResponse(responseCode = "404", description = "No orders found of that ticker on that date") })
     @GetMapping("/lowest_price/{ticker}/{date}")
-    public ResponseEntity<?> getLowestPrice(@PathVariable Tickers ticker, @PathVariable LocalDate date) {
+    public ResponseEntity<?> getLowestPricePerTickerAndDate(@PathVariable Tickers ticker, @PathVariable LocalDate date) {
         Optional<BigDecimal> lowestPrice = orderService.getMinPrice(ticker, date);
         if (lowestPrice.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "No orders found of that ticker on this specific date"));
@@ -81,7 +81,7 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the highest price"),
             @ApiResponse(responseCode = "404", description = "No orders found of that ticker on that date") })
     @GetMapping("/highest_price/{ticker}/{date}")
-    public ResponseEntity<?> getHighestPrice(@PathVariable Tickers ticker, @PathVariable LocalDate date) {
+    public ResponseEntity<?> getHighestPricePerTickerAndDate(@PathVariable Tickers ticker, @PathVariable LocalDate date) {
         Optional<BigDecimal> highestPrice = orderService.getMaxPrice(ticker, date);
         if (highestPrice.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "No orders found of that ticker on this specific date"));
@@ -94,7 +94,7 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the average price"),
             @ApiResponse(responseCode = "404", description = "No orders found of that ticker on that date") })
     @GetMapping("/average_price/{ticker}/{date}")
-    public ResponseEntity<?> getAveragePrice(@PathVariable Tickers ticker, @PathVariable LocalDate date) {
+    public ResponseEntity<?> getAveragePricePerTickerAndDate(@PathVariable Tickers ticker, @PathVariable LocalDate date) {
         Optional<BigDecimal> averagePrice = orderService.getAveragePrice(ticker, date);
         if (averagePrice.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "No orders found of that ticker on this specific date"));
