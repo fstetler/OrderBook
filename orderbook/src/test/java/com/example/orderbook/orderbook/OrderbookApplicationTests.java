@@ -5,38 +5,18 @@ import com.example.orderbook.orderbook.enums.ExchangeType;
 import com.example.orderbook.orderbook.enums.Tickers;
 import com.example.orderbook.orderbook.model.Order;
 import com.example.orderbook.orderbook.repository.OrderBookRepository;
-import com.example.orderbook.orderbook.service.OrderService;
-import org.aspectj.weaver.ast.Or;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-//@ExtendWith(MockitoExtension.class)
-//@SpringBootTest
-//@RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
@@ -46,7 +26,18 @@ class OrderbookApplicationTests {
     private OrderBookRepository orderBookRepository;
 
     @Test
-    void findAllOrdersBetweenTwoIndexes() throws InterruptedException {
+    public void createNewOrderAndSave() {
+        Order order = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD);
+
+        Order orderSave = orderBookRepository.save(order);
+
+        Assertions.assertNotNull(orderSave.getId());
+        Assertions.assertEquals(orderSave.getTicker(), Tickers.TSLA);
+
+    }
+
+    @Test
+    public void findAllOrdersBetweenTwoIndexes() throws InterruptedException {
 
         orderBookRepository.save(new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD));
         Thread.sleep(200);
@@ -66,7 +57,7 @@ class OrderbookApplicationTests {
     }
 
     @Test
-    void findOrderById() throws InterruptedException {
+    public void findOrderById() throws InterruptedException {
 
         Order order = orderBookRepository.save(new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD));
         UUID id = order.getId();
@@ -75,7 +66,7 @@ class OrderbookApplicationTests {
     }
 
     @Test
-    void findHighestValueForOrderForATickerAndDate() {
+    public void findHighestValueForOrderForATickerAndDate() {
         Order order1 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD);
         Order order2 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(15.7515), Currencies.USD);
         Order order3 = new Order(Tickers.GME, ExchangeType.BUY, 500, BigDecimal.valueOf(10.7515), Currencies.USD);
@@ -87,11 +78,10 @@ class OrderbookApplicationTests {
         BigDecimal highestPrice = orderBookRepository.findHighestPricePerTickerAndDate(Tickers.TSLA.toString(), LocalDate.now()).get();
 
         Assertions.assertEquals(BigDecimal.valueOf(20.7515), highestPrice.stripTrailingZeros());
-
     }
 
     @Test
-    void findLowestValueForOrderForATickerAndDate() {
+    public void findLowestValueForOrderForATickerAndDate() {
         Order order1 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD);
         Order order2 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(15.7515), Currencies.USD);
         Order order3 = new Order(Tickers.GME, ExchangeType.BUY, 500, BigDecimal.valueOf(10.7515), Currencies.USD);
@@ -107,7 +97,7 @@ class OrderbookApplicationTests {
     }
 
     @Test
-    void findAverageValueForOrderForATickerAndDate() {
+    public void findAverageValueForOrderForATickerAndDate() {
         Order order1 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD);
         Order order2 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(15.7515), Currencies.USD);
         Order order3 = new Order(Tickers.GME, ExchangeType.BUY, 500, BigDecimal.valueOf(10.7515), Currencies.USD);
