@@ -7,6 +7,7 @@ import com.example.orderbook.orderbook.model.Order;
 import com.example.orderbook.orderbook.repository.OrderBookRepository;
 import com.example.orderbook.orderbook.service.OrderService;
 import org.aspectj.weaver.ast.Or;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ import static org.mockito.Mockito.when;
 //@RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-//@Transactional
+@Transactional
 class OrderbookApplicationTests {
 
     @Autowired
@@ -61,26 +62,65 @@ class OrderbookApplicationTests {
         int offset = 1;
         List<Order> orders = orderBookRepository.findOrdersByIndex(limit, offset);
         Assertions.assertEquals(3, orders.size());
-        Assertions.assertEquals(orders.get(0).getVolume(), 400);
+        Assertions.assertEquals(400, orders.get(0).getVolume());
     }
 
-//    @Test
-//    void findOrderById() {
-//
-//        Order order = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD);
-//        order.setId(UUID.randomUUID());
-//        orderBookRepository.save(order);
-//
-//        Assertions.assertEquals(orderBookRepository.findById(uuid), uuid);
-//    }
+    @Test
+    void findOrderById() throws InterruptedException {
 
-//    @Test
-//    void findHighestValueForOrderForATickerAndDate() {
-//        Order order1 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD);
-//        Order order2 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(15.7515), Currencies.USD);
-//
-//
-//    }
+        Order order = orderBookRepository.save(new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD));
+        UUID id = order.getId();
+
+        Assertions.assertEquals(orderBookRepository.findById(id).get().getId(), id);
+    }
+
+    @Test
+    void findHighestValueForOrderForATickerAndDate() {
+        Order order1 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD);
+        Order order2 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(15.7515), Currencies.USD);
+        Order order3 = new Order(Tickers.GME, ExchangeType.BUY, 500, BigDecimal.valueOf(10.7515), Currencies.USD);
+
+        orderBookRepository.save(order1);
+        orderBookRepository.save(order2);
+        orderBookRepository.save(order3);
+
+        BigDecimal highestPrice = orderBookRepository.findHighestPricePerTickerAndDate(Tickers.TSLA.toString(), LocalDate.now()).get();
+
+        Assertions.assertEquals(BigDecimal.valueOf(20.7515), highestPrice.stripTrailingZeros());
+
+    }
+
+    @Test
+    void findLowestValueForOrderForATickerAndDate() {
+        Order order1 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD);
+        Order order2 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(15.7515), Currencies.USD);
+        Order order3 = new Order(Tickers.GME, ExchangeType.BUY, 500, BigDecimal.valueOf(10.7515), Currencies.USD);
+
+        orderBookRepository.save(order1);
+        orderBookRepository.save(order2);
+        orderBookRepository.save(order3);
+
+        BigDecimal highestPrice = orderBookRepository.findLowestPricePerTickerAndDate(Tickers.TSLA.toString(), LocalDate.now()).get();
+
+        Assertions.assertEquals(BigDecimal.valueOf(15.7515), highestPrice.stripTrailingZeros());
+
+    }
+
+    @Test
+    void findAverageValueForOrderForATickerAndDate() {
+        Order order1 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(20.7515), Currencies.USD);
+        Order order2 = new Order(Tickers.TSLA, ExchangeType.BUY, 500, BigDecimal.valueOf(15.7515), Currencies.USD);
+        Order order3 = new Order(Tickers.GME, ExchangeType.BUY, 500, BigDecimal.valueOf(10.7515), Currencies.USD);
+
+        orderBookRepository.save(order1);
+        orderBookRepository.save(order2);
+        orderBookRepository.save(order3);
+
+        BigDecimal highestPrice = orderBookRepository.findAveragePricePerTickerAndDate(Tickers.TSLA.toString(), LocalDate.now()).get();
+
+        Assertions.assertEquals(BigDecimal.valueOf(18.2515), highestPrice.stripTrailingZeros());
+
+    }
 
 //	@Mock
 //	private OrderBookRepository orderBookRepository;

@@ -55,6 +55,15 @@ public class Order {
         this.currency = currency;
     }
 
+    public Order(UUID id, Tickers ticker, ExchangeType exchangetype, int volume, BigDecimal price, Currencies currency) {
+        this.id = id;
+        this.ticker = ticker;
+        this.exchangetype = exchangetype;
+        this.volume = volume;
+        this.price = price;
+        this.currency = currency;
+    }
+
 //    public Order(UUID id, Tickers ticker, ExchangeType exchangetype, int volume, BigDecimal price, Currencies currency, LocalDateTime created_at) {
 //        this.id = id;
 //        this.ticker = ticker;
