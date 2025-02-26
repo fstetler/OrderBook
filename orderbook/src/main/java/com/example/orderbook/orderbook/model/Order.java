@@ -44,9 +44,6 @@ public class Order {
 
     private LocalDateTime createdAt;
 
-//    @Version
-//    private Integer version;
-
     public Order(Tickers ticker, ExchangeType exchangetype, int volume, BigDecimal price, Currencies currency) {
         this.ticker = ticker;
         this.exchangetype = exchangetype;
@@ -55,24 +52,14 @@ public class Order {
         this.currency = currency;
     }
 
-    public Order(UUID id, Tickers ticker, ExchangeType exchangetype, int volume, BigDecimal price, Currencies currency) {
-        this.id = id;
+    public Order(Tickers ticker, ExchangeType exchangetype, int volume, BigDecimal price, Currencies currency, LocalDateTime created_at) {
         this.ticker = ticker;
         this.exchangetype = exchangetype;
         this.volume = volume;
         this.price = price;
         this.currency = currency;
+        this.createdAt = created_at;
     }
-
-//    public Order(UUID id, Tickers ticker, ExchangeType exchangetype, int volume, BigDecimal price, Currencies currency, LocalDateTime created_at) {
-//        this.id = id;
-//        this.ticker = ticker;
-//        this.exchangetype = exchangetype;
-//        this.volume = volume;
-//        this.price = price;
-//        this.currency = currency;
-//        this.createdAt = created_at;
-//    }
 
     @PrePersist
     private void onCreate() {
