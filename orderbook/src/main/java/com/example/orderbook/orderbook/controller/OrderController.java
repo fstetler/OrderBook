@@ -3,7 +3,6 @@ package com.example.orderbook.orderbook.controller;
 import com.example.orderbook.orderbook.dtos.requests.OrderRequest;
 import com.example.orderbook.orderbook.dtos.responses.OrderResponse;
 import com.example.orderbook.orderbook.enums.Tickers;
-import com.example.orderbook.orderbook.model.Order;
 import com.example.orderbook.orderbook.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

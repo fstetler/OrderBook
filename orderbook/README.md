@@ -43,5 +43,9 @@ This application runs a local **H2 database**.
   ```http
   GET http://localhost:8080/orders/amount/{ticker}/{date}
   ```
+  
+If I had more time
+- **Focus on seeing if I had missed any test cases**
+
 ---
 
